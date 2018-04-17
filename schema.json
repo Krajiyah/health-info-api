@@ -1,0 +1,62 @@
+{
+  "User": {
+    "path": "Users",
+    "fields": {
+      "firstName": "string",
+      "lastName": "string",
+      "phoneNumber": "string",
+      "email": "string",
+      "imageUrl": "link",
+      "medicalHistory": "array",
+      "photoIdUrl": "link",
+      "insuranceUrl": "link"
+    }
+  },
+  "GeneralInfo": {
+    "path": "GeneralInfo",
+    "fields": {
+      "user": "string:Users",
+      "dateOfBirth": "string",
+      "sex": "string",
+      "maritalStatus": "string",
+      "occupation": "string"
+    }
+  },
+  "LocationInfo": {
+    "path": "LocationInfo",
+    "fields": {
+      "user": "string:Users",
+      "addressLine1": "string",
+      "addressLine2": "string",
+      "city": "string",
+      "state": "string",
+      "zipcode": "string"
+    }
+  },
+  "EmergencyContact": {
+    "path": "EmergencyContacts",
+    "fields": {
+      "user": "string:Users",
+      "fullName": "string",
+      "phoneNumber": "string",
+      "email": "string"
+    }
+  },
+  "MedicationHistory": {
+    "path": "MedicationHistory",
+    "fields": {
+      "user": "string:Users",
+      "type": "string",
+      "amount": "string",
+      "frequency": "string"
+    }
+  },
+  "Appointment": {
+    "path": "Appointments",
+    "fields": {
+      "user": "string:Users",
+      "name": "string",
+      "time": "number"
+    }
+  }
+}
