@@ -14,50 +14,5 @@ firebase.initializeApp({
   storageBucket: process.env.FIREBASE_STORAGE_URL
 });
 
-// OBJECT
-var myFb = firebaseUtil(firebase, schema);
-
-if (process.env.STAGE == "TEST") {
-  let getUids = (token) => {
-    return firebase.auth().listUsers(1000, token).then(function(res) {
-      let uids = res.users.map(x => x.uid);
-      if (!res.pageToken) return uids;
-      return getUids(res.pageToken).then(uList => uList.concat(uids));
-    });
-  }
-
-  let clearAllUsers = () => {
-    return getUids().then(uids => {
-      return Promise.all(uids.map(uid => firebase.auth().deleteUser(uid)));
-    });
-  }
-
-  let deleteFile = (name) => {
-    return firebase.storage().bucket().file(name).delete();
-  }
-
-  let clearAllFiles = () => {
-    return firebase.storage().bucket().getFiles().then(files => {
-      return Promise.all(files[0].map(file => deleteFile(file.name)));
-    });
-  }
-
-  myFb.clearAll = () => {
-    return Promise.all([
-      firebase.database().ref().remove(),
-      clearAllFiles(),
-      clearAllUsers()
-    ]);
-  }
-
-  Object.keys(myFb.fcm).forEach(methodName => {
-    let origMethod = myFb.fcm[methodName].bind({});
-    myFb.fcm[methodName] = (...params) => {
-      if (process.env.STAGE == "TEST") return Promise.resolve();
-      return origMethod(...params);
-    }
-  });
-}
-
 // EXPORTS
-module.exports = myFb;
+module.exports = firebaseUtil(firebase, schema);
