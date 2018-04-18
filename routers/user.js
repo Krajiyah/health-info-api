@@ -32,5 +32,19 @@ router.post("/users", upload.single('image'), (req, res) => {
   routerUtil.completeRequest(req, res, User.create);
 });
 
+router.patch("/users/:key/generalInfo", (req, res) => {
+  req.checkParams("key", routerUtil.errors.missingErrorMessage).notEmpty();
+  req.checkParams("key", routerUtil.errors.dbErrorMessage)
+    .isAsyncFnTrue(User.exists);
+  req.checkBody("dateOfBirth", routerUtil.errors.missingErrorMessage).notEmpty();
+  req.checkBody("sex", routerUtil.errors.missingErrorMessage).notEmpty();
+  req.checkBody("maritalStatus", routerUtil.errors.missingErrorMessage).notEmpty();
+  req.checkBody("occupation", routerUtil.errors.missingErrorMessage).notEmpty();
+  routerUtil.completeRequest(req, res, async params => {
+    let user = await User.getByKey(params.key);
+    return await user.setGeneralInfo(params);
+  });
+});
+
 // EXPORTS
 module.exports = router;
