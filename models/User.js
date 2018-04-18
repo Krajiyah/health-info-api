@@ -6,6 +6,14 @@ const fcm = firebase.fcm;
 const storage = firebase.storage;
 
 // PROTOTYPES
+User.prototype.setImage = async function(field, file) {
+  let url = await storage.upload(file);
+  let val = {};
+  val[field] = url;
+  await this.update(val);
+  return url;
+}
+
 User.prototype.hasGeneralInfo = async function() {
   let o = await GeneralInfo.getAllByFields({
     user: this.getKey()

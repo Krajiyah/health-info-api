@@ -58,5 +58,46 @@ router.patch("/users/:key/generalInfo", (req, res) => {
   });
 });
 
+router.patch("/users/:key/medicalHistory", (req, res) => {
+  req.checkParams("key", routerUtil.errors.missingErrorMessage).notEmpty();
+  req.checkParams("key", routerUtil.errors.dbErrorMessage)
+    .isAsyncFnTrue(User.exists);
+  req.checkBody("medicalHistory", routerUtil.errors.missingErrorMessage).notEmpty();
+  req.checkBody("medicalHistory", routerUtil.errors.formatErrorMessage).isNonEmptyArray();
+  routerUtil.completeRequest(req, res, async params => {
+    let user = await User.getByKey(params.key);
+    await user.update({
+      medicalHistory: params.medicalHistory
+    });
+    return params.medicalHistory;
+  });
+});
+
+router.patch("/users/:key/photoId", upload.single("image"), (req, res) => {
+  req.body.image = req.file;
+  req.checkParams("key", routerUtil.errors.missingErrorMessage).notEmpty();
+  req.checkParams("key", routerUtil.errors.dbErrorMessage)
+    .isAsyncFnTrue(User.exists);
+  req.checkBody("image", routerUtil.errors.missingErrorMessage).notEmpty();
+  req.checkBody("image", routerUtil.errors.formatErrorMessage).isValidFile();
+  routerUtil.completeRequest(req, res, async params => {
+    let user = await User.getByKey(params.key);
+    return await user.setImage("photoIdUrl", params.image);
+  });
+});
+
+router.patch("/users/:key/insurance", upload.single("image"), (req, res) => {
+  req.body.image = req.file;
+  req.checkParams("key", routerUtil.errors.missingErrorMessage).notEmpty();
+  req.checkParams("key", routerUtil.errors.dbErrorMessage)
+    .isAsyncFnTrue(User.exists);
+  req.checkBody("image", routerUtil.errors.missingErrorMessage).notEmpty();
+  req.checkBody("image", routerUtil.errors.formatErrorMessage).isValidFile();
+  routerUtil.completeRequest(req, res, async params => {
+    let user = await User.getByKey(params.key);
+    return await user.setImage("insuranceUrl", params.image);
+  });
+});
+
 // EXPORTS
 module.exports = router;
