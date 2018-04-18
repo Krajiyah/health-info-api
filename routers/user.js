@@ -9,6 +9,51 @@ const upload = multer({
   dest: '/tmp/'
 });
 
+// HELPERS
+let setImageRoute = field => {
+  router.patch("/users/:key/" + field, upload.single("image"), (req, res) => {
+    req.body.image = req.file;
+    req.checkParams("key", routerUtil.errors.missingErrorMessage).notEmpty();
+    req.checkParams("key", routerUtil.errors.dbErrorMessage)
+      .isAsyncFnTrue(User.exists);
+    req.checkBody("image", routerUtil.errors.missingErrorMessage).notEmpty();
+    req.checkBody("image", routerUtil.errors.formatErrorMessage).isValidFile();
+    routerUtil.completeRequest(req, res, async params => {
+      let user = await User.getByKey(params.key);
+      return await user.setImage(field + "Url", params.image);
+    });
+  });
+}
+
+let getDataRoute = (field, validateFn, fetchFnKey) => {
+  router.get("/users/:key/" + field, (req, res) => {
+    req.checkParams("key", routerUtil.errors.missingErrorMessage).notEmpty();
+    req.checkParams("key", routerUtil.errors.dbErrorMessage)
+      .isAsyncFnTrue(User.exists);
+    req.checkParams("key", "user does not have general info")
+      .isAsyncFnTrue(validateFn);
+    routerUtil.completeRequest(req, res, async params => {
+      let user = await User.getByKey(params.key);
+      return await user[fetchFnKey]();
+    });
+  });
+}
+
+let setDataRoute = (field, dataFields, setFnKey) => {
+  router.patch("/users/:key/" + field, (req, res) => {
+    req.checkParams("key", routerUtil.errors.missingErrorMessage).notEmpty();
+    req.checkParams("key", routerUtil.errors.dbErrorMessage)
+      .isAsyncFnTrue(User.exists);
+    dataFields.forEach(f => {
+      req.checkBody(f, routerUtil.errors.missingErrorMessage).notEmpty();
+    });
+    routerUtil.completeRequest(req, res, async params => {
+      let user = await User.getByKey(params.key);
+      return await user[setFnKey](params);
+    });
+  });
+}
+
 // ROUTES
 router.get("/users/:key?", (req, res) => {
   req.checkQuery("key", routerUtil.errors.missingErrorMessage).notEmpty();
@@ -32,32 +77,6 @@ router.post("/users", upload.single('image'), (req, res) => {
   routerUtil.completeRequest(req, res, User.create);
 });
 
-router.get("/users/:key/generalInfo", (req, res) => {
-  req.checkParams("key", routerUtil.errors.missingErrorMessage).notEmpty();
-  req.checkParams("key", routerUtil.errors.dbErrorMessage)
-    .isAsyncFnTrue(User.exists);
-  req.checkParams("key", "user does not have general info")
-    .isAsyncFnTrue(User.hasGeneralInfo);
-  routerUtil.completeRequest(req, res, async params => {
-    let user = await User.getByKey(params.key);
-    return await user.getGeneralInfo();
-  });
-});
-
-router.patch("/users/:key/generalInfo", (req, res) => {
-  req.checkParams("key", routerUtil.errors.missingErrorMessage).notEmpty();
-  req.checkParams("key", routerUtil.errors.dbErrorMessage)
-    .isAsyncFnTrue(User.exists);
-  req.checkBody("dateOfBirth", routerUtil.errors.missingErrorMessage).notEmpty();
-  req.checkBody("sex", routerUtil.errors.missingErrorMessage).notEmpty();
-  req.checkBody("maritalStatus", routerUtil.errors.missingErrorMessage).notEmpty();
-  req.checkBody("occupation", routerUtil.errors.missingErrorMessage).notEmpty();
-  routerUtil.completeRequest(req, res, async params => {
-    let user = await User.getByKey(params.key);
-    return await user.setGeneralInfo(params);
-  });
-});
-
 router.patch("/users/:key/medicalHistory", (req, res) => {
   req.checkParams("key", routerUtil.errors.missingErrorMessage).notEmpty();
   req.checkParams("key", routerUtil.errors.dbErrorMessage)
@@ -73,31 +92,18 @@ router.patch("/users/:key/medicalHistory", (req, res) => {
   });
 });
 
-router.patch("/users/:key/photoId", upload.single("image"), (req, res) => {
-  req.body.image = req.file;
-  req.checkParams("key", routerUtil.errors.missingErrorMessage).notEmpty();
-  req.checkParams("key", routerUtil.errors.dbErrorMessage)
-    .isAsyncFnTrue(User.exists);
-  req.checkBody("image", routerUtil.errors.missingErrorMessage).notEmpty();
-  req.checkBody("image", routerUtil.errors.formatErrorMessage).isValidFile();
-  routerUtil.completeRequest(req, res, async params => {
-    let user = await User.getByKey(params.key);
-    return await user.setImage("photoIdUrl", params.image);
-  });
-});
+setImageRoute("photoId");
+setImageRoute("insurance");
 
-router.patch("/users/:key/insurance", upload.single("image"), (req, res) => {
-  req.body.image = req.file;
-  req.checkParams("key", routerUtil.errors.missingErrorMessage).notEmpty();
-  req.checkParams("key", routerUtil.errors.dbErrorMessage)
-    .isAsyncFnTrue(User.exists);
-  req.checkBody("image", routerUtil.errors.missingErrorMessage).notEmpty();
-  req.checkBody("image", routerUtil.errors.formatErrorMessage).isValidFile();
-  routerUtil.completeRequest(req, res, async params => {
-    let user = await User.getByKey(params.key);
-    return await user.setImage("insuranceUrl", params.image);
-  });
-});
+getDataRoute("generalInfo", User.hasGeneralInfo, "getGeneralInfo");
+getDataRoute("locationInfo", User.hasLocationInfo, "getLocationInfo");
+
+setDataRoute("generalInfo", [
+  "dateOfBirth", "sex", "maritalStatus", "occupation"
+], "setGeneralInfo");
+setDataRoute("locationInfo", [
+  "addressLine1", "addressLine2", "city", "state", "zipcode"
+], "setLocationInfo");
 
 // EXPORTS
 module.exports = router;
