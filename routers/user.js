@@ -32,6 +32,18 @@ router.post("/users", upload.single('image'), (req, res) => {
   routerUtil.completeRequest(req, res, User.create);
 });
 
+router.get("/users/:key/generalInfo", (req, res) => {
+  req.checkParams("key", routerUtil.errors.missingErrorMessage).notEmpty();
+  req.checkParams("key", routerUtil.errors.dbErrorMessage)
+    .isAsyncFnTrue(User.exists);
+  req.checkParams("key", "user does not have general info")
+    .isAsyncFnTrue(User.hasGeneralInfo);
+  routerUtil.completeRequest(req, res, async params => {
+    let user = await User.getByKey(params.key);
+    return await user.getGeneralInfo();
+  });
+});
+
 router.patch("/users/:key/generalInfo", (req, res) => {
   req.checkParams("key", routerUtil.errors.missingErrorMessage).notEmpty();
   req.checkParams("key", routerUtil.errors.dbErrorMessage)

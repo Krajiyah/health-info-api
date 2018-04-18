@@ -6,6 +6,20 @@ const fcm = firebase.fcm;
 const storage = firebase.storage;
 
 // PROTOTYPES
+User.prototype.hasGeneralInfo = async function() {
+  let o = await GeneralInfo.getAllByFields({
+    user: this.getKey()
+  });
+  return o.length > 0;
+}
+
+User.prototype.getGeneralInfo = async function() {
+  let o = await GeneralInfo.getAllByFields({
+    user: this.getKey()
+  });
+  return o[0];
+}
+
 User.prototype.setGeneralInfo = async function(params) {
   let o = await GeneralInfo.getAllByFields({
     user: this.getKey()
@@ -29,6 +43,11 @@ User.prototype.setGeneralInfo = async function(params) {
 // STATICS
 User.exists = async key => await User.getKeysExist([key]);
 User.notExists = async key => !(await User.exists(key));
+
+User.hasGeneralInfo = async key => {
+  let user = await User.getByKey(key);
+  return user.hasGeneralInfo();
+}
 
 User.create = async params => {
   let imageUrl = await storage.upload(params.image);
