@@ -2,7 +2,6 @@
 const express = require('express');
 const cors = require("cors");
 const bodyParser = require("body-parser");
-const cookieParser = require("cookie-parser");
 const validator = require('express-validator-custom');
 const router = require("./routers/main.js");
 
