@@ -4,6 +4,7 @@ const User = firebase.db.User;
 const GeneralInfo = firebase.db.GeneralInfo;
 const LocationInfo = firebase.db.LocationInfo;
 const storage = firebase.storage;
+const auth = firebase.auth;
 
 // PROTOTYPES
 User.prototype.setImage = async function(field, file) {
@@ -93,7 +94,8 @@ User.hasLocationInfo = async key => {
 
 User.create = async params => {
   let imageUrl = await storage.upload(params.image);
-  return await User.createByManualKey(params.key, {
+  let authData = await auth.create(params.email, params.password);
+  return await User.createByManualKey(authData.uid, {
     firstName: params.firstName,
     lastName: params.lastName,
     phoneNumber: params.phoneNumber,

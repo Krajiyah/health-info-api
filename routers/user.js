@@ -66,14 +66,13 @@ router.get("/users/:key?", (req, res) => {
 
 router.post("/users", upload.single('image'), (req, res) => {
   req.body.image = req.file;
-  req.checkBody("key", routerUtil.errors.missingErrorMessage).notEmpty();
-  req.checkBody("key", "user already exists").isAsyncFnTrue(User.notExists);
   req.checkBody("image", router.errors.missingErrorMessage).notEmpty();
   req.checkBody("image", router.errors.formatErrorMessage).isValidFile();
   req.checkBody("firstName", routerUtil.errors.missingErrorMessage).notEmpty();
   req.checkBody("lastName", routerUtil.errors.missingErrorMessage).notEmpty();
   req.checkBody("phoneNumber", routerUtil.errors.missingErrorMessage).notEmpty();
   req.checkBody("email", routerUtil.errors.missingErrorMessage).notEmpty();
+  req.checkBody("password", routerUtil.errors.missingErrorMessage).notEmpty();
   routerUtil.completeRequest(req, res, User.create);
 });
 
