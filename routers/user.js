@@ -104,5 +104,15 @@ setDataRoute("locationInfo", [
   "addressLine1", "addressLine2", "city", "state", "zipcode"
 ], "setLocationInfo");
 
+router.get("/users/:key/appointments", (req, res) => {
+  req.checkQuery("key", routerUtil.errors.missingErrorMessage).notEmpty();
+  req.checkQuery("key", routerUtil.errors.dbErrorMessage)
+    .isAsyncFnTrue(User.exists);
+  routerUtil.completeRequest(req, res, async params => {
+    let user = await User.getByKey(params.key);
+    return await user.getAppointments();
+  });
+});
+
 // EXPORTS
 module.exports = router;

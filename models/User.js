@@ -1,6 +1,7 @@
 // DEPENDENCIES
 const firebase = require("../util/firebase.js");
 const User = firebase.db.User;
+const Appointment = firebase.db.Appointment;
 const GeneralInfo = firebase.db.GeneralInfo;
 const LocationInfo = firebase.db.LocationInfo;
 const storage = firebase.storage;
@@ -13,6 +14,12 @@ User.prototype.setImage = async function(field, file) {
   val[field] = url;
   await this.update(val);
   return url;
+}
+
+User.prototype.getAppointments = async function() {
+  return await Appointment.getAllByFields({
+    user: this.getKey()
+  });
 }
 
 User.prototype.hasData = async function(model) {
