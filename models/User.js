@@ -94,6 +94,14 @@ User.prototype.setLocationInfo = async function(params) {
   });
 }
 
+User.prototype.setEmergencyContact = async function(params) {
+  return await this.setData(EmergencyContact, {
+    fullName: params.fullName,
+    phoneNumber: params.phoneNumber,
+    email: params.email
+  });
+}
+
 // STATICS
 User.exists = async key => await User.getKeysExist([key]);
 User.notExists = async key => !(await User.exists(key));

@@ -105,6 +105,9 @@ setDataRoute("generalInfo", [
 setDataRoute("locationInfo", [
   "addressLine1", "addressLine2", "city", "state", "zipcode"
 ], "setLocationInfo");
+setDataRoute("emergencyContact", [
+  "fullName", "phoneNumber", "email"
+], "setEmergencyContact");
 
 router.get("/users/:key/appointments", (req, res) => {
   req.checkQuery("key", routerUtil.errors.missingErrorMessage).notEmpty();
