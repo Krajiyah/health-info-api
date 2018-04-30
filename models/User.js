@@ -2,6 +2,7 @@
 const firebase = require("../util/firebase.js");
 const User = firebase.db.User;
 const Appointment = firebase.db.Appointment;
+const EmergencyContact = firebase.db.EmergencyContact;
 const GeneralInfo = firebase.db.GeneralInfo;
 const LocationInfo = firebase.db.LocationInfo;
 const storage = firebase.storage;
@@ -37,6 +38,10 @@ User.prototype.hasLocationInfo = async function() {
   return await this.hasData(LocationInfo);
 }
 
+User.prototype.hasEmergencyContact = async function() {
+  return await this.hasData(EmergencyContact);
+}
+
 User.prototype.getData = async function(model) {
   let o = await model.getAllByFields({
     user: this.getKey()
@@ -50,6 +55,10 @@ User.prototype.getGeneralInfo = async function() {
 
 User.prototype.getLocationInfo = async function() {
   return await this.getData(LocationInfo);
+}
+
+User.prototype.getEmergencyContact = async function() {
+  return await this.getData(EmergencyContact);
 }
 
 User.prototype.setData = async function(model, val) {
@@ -91,12 +100,17 @@ User.notExists = async key => !(await User.exists(key));
 
 User.hasGeneralInfo = async key => {
   let user = await User.getByKey(key);
-  return user.hasGeneralInfo();
+  return await user.hasGeneralInfo();
 }
 
 User.hasLocationInfo = async key => {
   let user = await User.getByKey(key);
-  return user.hasLocationInfo();
+  return await user.hasLocationInfo();
+}
+
+Use.hasEmergencyContact = async key => {
+  let user = await User.getByKey(key);
+  return await user.hasEmergencyContact();
 }
 
 User.create = async params => {

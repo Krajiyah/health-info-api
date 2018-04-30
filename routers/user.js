@@ -96,6 +96,8 @@ setImageRoute("insurance");
 
 getDataRoute("generalInfo", User.hasGeneralInfo, "getGeneralInfo");
 getDataRoute("locationInfo", User.hasLocationInfo, "getLocationInfo");
+getDataRoute("emergencyContact", User.hasEmergencyContact,
+  "getEmergencyContact");
 
 setDataRoute("generalInfo", [
   "dateOfBirth", "sex", "maritalStatus", "occupation"
