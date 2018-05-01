@@ -3,12 +3,12 @@ const nodemailer = require("nodemailer");
 const sanitize = require("sanitize-filename");
 
 // CONSTANTS
-const senderEmail = proccess.env.EMAIL;
+const senderEmail = process.env.EMAIL;
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
     user: senderEmail,
-    pass: proccess.env.EMAIL_PASSWORD
+    pass: process.env.EMAIL_PASSWORD
   }
 });
 
