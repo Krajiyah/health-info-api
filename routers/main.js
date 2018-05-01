@@ -1,7 +1,7 @@
 // DEPENDENCIES
 const router = require("express").Router();
 const subRouters = [
-  "./user.js"
+  "./user.js", "./appointments.js"
 ];
 
 // ROUTES
