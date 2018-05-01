@@ -3,16 +3,15 @@ const nodemailer = require("nodemailer");
 const sanitize = require("sanitize-filename");
 
 // CONSTANTS
-const senderEmail = "sender@domain.com";
+const senderEmail = proccess.env.EMAIL;
 
 // SETUP
-// TODO: put real credentials here for gmail account
 nodemailer.SMTP = {
-  host: 'mail.yourmail.com',
-  port: 25,
+  host: proccess.env.EMAIL_HOST,
+  port: parseInt(proccess.env.EMAIL_PORT),
   use_authentication: true,
   user: senderEmail,
-  pass: 'somepasswd'
+  pass: proccess.env.EMAIL_PASSWORD
 };
 
 // METHODS
@@ -26,8 +25,8 @@ var sendWithAttachment = async(email, subjectText, text, filename, file) => {
           subject: subjectText,
           body: text,
           attachments: [{
-            'filename': filename,
-            'content': data
+            filename: filename,
+            content: data
           }]
         }, function(err, success) {
           if (err) reject(err)
