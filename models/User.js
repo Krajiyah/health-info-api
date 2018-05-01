@@ -148,7 +148,7 @@ User.hasLocationInfo = async key => {
   return await user.hasLocationInfo();
 }
 
-Use.hasEmergencyContact = async key => {
+User.hasEmergencyContact = async key => {
   let user = await User.getByKey(key);
   return await user.hasEmergencyContact();
 }
