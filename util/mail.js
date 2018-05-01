@@ -17,20 +17,19 @@ var sendWithAttachment = async(email, subjectText, text, filename, file) => {
   filename = sanitize(filename);
   let data = fs.readFileSync(file);
   return await new Promise(function(resolve, reject) {
-      transporter.sendMail({
-          from: senderEmail,
-          to: email,
-          subject: subjectText,
-          body: text,
-          attachments: [{
-            filename: filename,
-            content: data
-          }]
-        }, function(err, success) {
-          if (err) reject(err)
-          else resolve(success);
-        }
-      })
+    transporter.sendMail({
+      from: senderEmail,
+      to: email,
+      subject: subjectText,
+      body: text,
+      attachments: [{
+        filename: filename,
+        content: data
+      }]
+    }, function(err, success) {
+      if (err) reject(err)
+      else resolve(success);
+    })
   });
 }
 
