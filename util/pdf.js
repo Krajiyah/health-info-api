@@ -40,7 +40,7 @@ PDFDocument.prototype.addFormattedPage = function(title, paragraphs) {
 }
 
 // STATICS
-PDFDocument.genFormattedDoc = function(pages) {
+PDFDocument.genFormattedDoc = pages => {
   let doc = new PDFDocument();
   doc.pipe(fs.createWriteStream(tmpFile));
   doc.addTitlePage(appIcon, coverPageText);
