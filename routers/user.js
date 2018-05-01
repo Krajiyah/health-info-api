@@ -55,6 +55,24 @@ let setDataRoute = (field, dataFields, setFnKey) => {
 }
 
 // ROUTES
+setImageRoute("photoId");
+setImageRoute("insurance");
+
+getDataRoute("generalInfo", User.hasGeneralInfo, "getGeneralInfo");
+getDataRoute("locationInfo", User.hasLocationInfo, "getLocationInfo");
+getDataRoute("emergencyContact", User.hasEmergencyContact,
+  "getEmergencyContact");
+
+setDataRoute("generalInfo", [
+  "dateOfBirth", "sex", "maritalStatus", "occupation"
+], "setGeneralInfo");
+setDataRoute("locationInfo", [
+  "addressLine1", "addressLine2", "city", "state", "zipcode"
+], "setLocationInfo");
+setDataRoute("emergencyContact", [
+  "fullName", "phoneNumber", "email"
+], "setEmergencyContact");
+
 router.get("/users/:key?", (req, res) => {
   req.checkQuery("key", routerUtil.errors.missingErrorMessage).notEmpty();
   req.checkQuery("key", routerUtil.errors.dbErrorMessage)
@@ -91,24 +109,6 @@ router.patch("/users/:key/medicalHistory", (req, res) => {
   });
 });
 
-setImageRoute("photoId");
-setImageRoute("insurance");
-
-getDataRoute("generalInfo", User.hasGeneralInfo, "getGeneralInfo");
-getDataRoute("locationInfo", User.hasLocationInfo, "getLocationInfo");
-getDataRoute("emergencyContact", User.hasEmergencyContact,
-  "getEmergencyContact");
-
-setDataRoute("generalInfo", [
-  "dateOfBirth", "sex", "maritalStatus", "occupation"
-], "setGeneralInfo");
-setDataRoute("locationInfo", [
-  "addressLine1", "addressLine2", "city", "state", "zipcode"
-], "setLocationInfo");
-setDataRoute("emergencyContact", [
-  "fullName", "phoneNumber", "email"
-], "setEmergencyContact");
-
 router.get("/users/:key/appointments", (req, res) => {
   req.checkQuery("key", routerUtil.errors.missingErrorMessage).notEmpty();
   req.checkQuery("key", routerUtil.errors.dbErrorMessage)
@@ -116,6 +116,16 @@ router.get("/users/:key/appointments", (req, res) => {
   routerUtil.completeRequest(req, res, async params => {
     let user = await User.getByKey(params.key);
     return await user.getAppointments();
+  });
+});
+
+router.get("/users/:key/medicationHistory", (req, res) => {
+  req.checkQuery("key", routerUtil.errors.missingErrorMessage).notEmpty();
+  req.checkQuery("key", routerUtil.errors.dbErrorMessage)
+    .isAsyncFnTrue(User.exists);
+  routerUtil.completeRequest(req, res, async params => {
+    let user = await User.getByKey(params.key);
+    return await user.getMedicationHistory();
   });
 });
 

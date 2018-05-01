@@ -2,6 +2,7 @@
 const firebase = require("../util/firebase.js");
 const User = firebase.db.User;
 const Appointment = firebase.db.Appointment;
+const MedicationHistory = firebase.db.MedicationHistory;
 const EmergencyContact = firebase.db.EmergencyContact;
 const GeneralInfo = firebase.db.GeneralInfo;
 const LocationInfo = firebase.db.LocationInfo;
@@ -17,10 +18,18 @@ User.prototype.setImage = async function(field, file) {
   return url;
 }
 
-User.prototype.getAppointments = async function() {
-  return await Appointment.getAllByFields({
+User.prototype.getAllData = async function(model) {
+  return await model.getAllByFields({
     user: this.getKey()
   });
+}
+
+User.prototype.getMedicationHistory = async function() {
+  return await this.getAllData(MedicationHistory);
+}
+
+User.prototype.getAppointments = async function() {
+  return await this.getAllData(Appointment);
 }
 
 User.prototype.hasData = async function(model) {
