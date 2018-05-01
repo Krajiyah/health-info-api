@@ -55,8 +55,17 @@
     "path": "Appointments",
     "fields": {
       "user": "string:Users",
+      "institution": "string:Institutions",
       "name": "string",
-      "time": "number"
+      "time": "number",
+      "signedIn": "boolean"
+    }
+  },
+  "Institution": {
+    "path": "Institutions",
+    "fields": {
+      "name": "string",
+      "email": "string"
     }
   }
 }
