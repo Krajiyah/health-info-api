@@ -2,6 +2,7 @@
 const router = require("express").Router();
 const routerUtil = require("../util/router.js");
 const User = require("../models/User.js");
+const MedicationHistory = require("../models/MedicationHistory.js");
 const multer = require("multer");
 
 // CONSTANTS
@@ -110,8 +111,8 @@ router.patch("/users/:key/medicalHistory", (req, res) => {
 });
 
 router.get("/users/:key/appointments", (req, res) => {
-  req.checkQuery("key", routerUtil.errors.missingErrorMessage).notEmpty();
-  req.checkQuery("key", routerUtil.errors.dbErrorMessage)
+  req.checkParams("key", routerUtil.errors.missingErrorMessage).notEmpty();
+  req.checkParams("key", routerUtil.errors.dbErrorMessage)
     .isAsyncFnTrue(User.exists);
   routerUtil.completeRequest(req, res, async params => {
     let user = await User.getByKey(params.key);
@@ -120,12 +121,45 @@ router.get("/users/:key/appointments", (req, res) => {
 });
 
 router.get("/users/:key/medicationHistory", (req, res) => {
-  req.checkQuery("key", routerUtil.errors.missingErrorMessage).notEmpty();
-  req.checkQuery("key", routerUtil.errors.dbErrorMessage)
+  req.checkParams("key", routerUtil.errors.missingErrorMessage).notEmpty();
+  req.checkParams("key", routerUtil.errors.dbErrorMessage)
     .isAsyncFnTrue(User.exists);
   routerUtil.completeRequest(req, res, async params => {
     let user = await User.getByKey(params.key);
     return await user.getMedicationHistory();
+  });
+});
+
+router.post("/users/:key/medicationHistory", (req, res) => {
+  req.checkParams("key", routerUtil.errors.missingErrorMessage).notEmpty();
+  req.checkParams("key", routerUtil.errors.dbErrorMessage)
+    .isAsyncFnTrue(User.exists);
+  req.checkBody("type", routerUtil.errors.type).notEmpty();
+  req.checkBody("amount", routerUtil.errors.type).notEmpty();
+  req.checkBody("frequency", routerUtil.errors.type).notEmpty();
+  routerUtil.completeRequest(req, res, async params => {
+    let user = await User.getByKey(params.key);
+    return await user.addMedicationHistory(params);
+  });
+});
+
+router.patch("/users/:key/medicationHistory/:key2", (req, res) => {
+  req.checkParams("key", routerUtil.errors.missingErrorMessage).notEmpty();
+  req.checkParams("key", routerUtil.errors.dbErrorMessage)
+    .isAsyncFnTrue(User.exists);
+  req.checkParams("key2", routerUtil.errors.missingErrorMessage).notEmpty();
+  req.checkParams("key2", routerUtil.errors.dbErrorMessage)
+    .isAsyncFnTrue(MedicationHistory.exists);
+  req.checkBody("type", routerUtil.errors.type).notEmpty();
+  req.checkBody("amount", routerUtil.errors.type).notEmpty();
+  req.checkBody("frequency", routerUtil.errors.type).notEmpty();
+  routerUtil.completeRequest(req, res, async params => {
+    let mh = await MedicationHistory.getByKey(params.key2);
+    return await mh.update({
+      type: params.type,
+      amount: params.amount,
+      frequency: params.frequency
+    });
   });
 });
 

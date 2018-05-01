@@ -111,6 +111,15 @@ User.prototype.setEmergencyContact = async function(params) {
   });
 }
 
+User.prototype.addMedicationHistory = async function(params) {
+  return await MedicationHistory.createByAutoKey({
+    user: this.getKey(),
+    type: params.type,
+    amount: params.amount,
+    frequency: params.frequency
+  });
+}
+
 // STATICS
 User.exists = async key => await User.getKeysExist([key]);
 User.notExists = async key => !(await User.exists(key));
