@@ -135,8 +135,8 @@ router.post("/users/:key/medicationHistory", (req, res) => {
   req.checkParams("key", routerUtil.errors.dbErrorMessage)
     .isAsyncFnTrue(User.exists);
   req.checkBody("type", routerUtil.errors.type).notEmpty();
-  req.checkBody("amount", routerUtil.errors.type).notEmpty();
-  req.checkBody("frequency", routerUtil.errors.type).notEmpty();
+  req.checkBody("amount", routerUtil.errors.amount).notEmpty();
+  req.checkBody("frequency", routerUtil.errors.frequency).notEmpty();
   routerUtil.completeRequest(req, res, async params => {
     let user = await User.getByKey(params.key);
     return await user.addMedicationHistory(params);
@@ -151,8 +151,8 @@ router.patch("/users/:key/medicationHistory/:key2", (req, res) => {
   req.checkParams("key2", routerUtil.errors.dbErrorMessage)
     .isAsyncFnTrue(MedicationHistory.exists);
   req.checkBody("type", routerUtil.errors.type).notEmpty();
-  req.checkBody("amount", routerUtil.errors.type).notEmpty();
-  req.checkBody("frequency", routerUtil.errors.type).notEmpty();
+  req.checkBody("amount", routerUtil.errors.amount).notEmpty();
+  req.checkBody("frequency", routerUtil.errors.frequency).notEmpty();
   routerUtil.completeRequest(req, res, async params => {
     let mh = await MedicationHistory.getByKey(params.key2);
     await mh.update({
