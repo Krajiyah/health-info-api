@@ -16,7 +16,7 @@ const transporter = nodemailer.createTransport({
 var sendWithAttachment = async(email, subjectText, text, filename, file) => {
   filename = sanitize(filename);
   let data = fs.readFileSync(file);
-  return await new Promise(function(resolve reject) {
+  return await new Promise(function(resolve, reject) {
       transporter.sendMail({
           from: senderEmail,
           to: email,
