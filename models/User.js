@@ -8,6 +8,10 @@ const GeneralInfo = firebase.db.GeneralInfo;
 const LocationInfo = firebase.db.LocationInfo;
 const storage = firebase.storage;
 const auth = firebase.auth;
+const fcm = firebase.fcm;
+
+// CONSTANTS
+const appName = "MySmartMedical";
 
 // PROTOTYPES
 User.prototype.setImage = async function(field, file) {
@@ -118,6 +122,16 @@ User.prototype.addMedicationHistory = async function(params) {
     amount: params.amount,
     frequency: params.frequency
   });
+}
+
+User.prototype.setFCMToken = async function(token) {
+  await this.update({
+    fcmToken: token
+  });
+}
+
+User.prototype.sendNotification = async function(message) {
+  await fcm.sendToDevice(this.fcmToken, appName, message, {});
 }
 
 // STATICS
