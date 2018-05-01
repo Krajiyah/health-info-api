@@ -95,6 +95,18 @@ router.post("/users", upload.single('image'), (req, res) => {
   routerUtil.completeRequest(req, res, User.create);
 });
 
+router.patch("/users/:key/fcmToken", (req, res) => {
+  req.checkParams("key", routerUtil.errors.missingErrorMessage).notEmpty();
+  req.checkParams("key", routerUtil.errors.dbErrorMessage)
+    .isAsyncFnTrue(User.exists);
+  req.checkBody("token", routerUtil.errors.missingErrorMessage).notEmpty();
+  routerUtil.completeRequest(req, res, async params => {
+    let user = await User.getByKey(params.key);
+    await user.setFCMToken(params.token);
+    return user;
+  });
+});
+
 router.patch("/users/:key/medicalHistory", (req, res) => {
   req.checkParams("key", routerUtil.errors.missingErrorMessage).notEmpty();
   req.checkParams("key", routerUtil.errors.dbErrorMessage)
