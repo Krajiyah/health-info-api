@@ -155,11 +155,12 @@ router.patch("/users/:key/medicationHistory/:key2", (req, res) => {
   req.checkBody("frequency", routerUtil.errors.type).notEmpty();
   routerUtil.completeRequest(req, res, async params => {
     let mh = await MedicationHistory.getByKey(params.key2);
-    return await mh.update({
+    await mh.update({
       type: params.type,
       amount: params.amount,
       frequency: params.frequency
     });
+    return mh;
   });
 });
 
