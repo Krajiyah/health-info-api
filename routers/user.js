@@ -164,5 +164,19 @@ router.patch("/users/:key/medicationHistory/:key2", (req, res) => {
   });
 });
 
+router.delete("/users/:key/medicationHistory/:key2", (req, res) => {
+  req.checkParams("key", routerUtil.errors.missingErrorMessage).notEmpty();
+  req.checkParams("key", routerUtil.errors.dbErrorMessage)
+    .isAsyncFnTrue(User.exists);
+  req.checkParams("key2", routerUtil.errors.missingErrorMessage).notEmpty();
+  req.checkParams("key2", routerUtil.errors.dbErrorMessage)
+    .isAsyncFnTrue(MedicationHistory.exists);
+  routerUtil.completeRequest(req, res, async params => {
+    let mh = await MedicationHistory.getByKey(params.key2);
+    await mh.delete();
+    return mh;
+  });
+});
+
 // EXPORTS
 module.exports = router;
