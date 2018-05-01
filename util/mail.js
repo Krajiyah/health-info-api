@@ -1,9 +1,9 @@
 // DEPENDENCIES
 const nodemailer = require("nodemailer");
+const sanitize = require("sanitize-filename");
 
 // CONSTANTS
 const senderEmail = "sender@domain.com";
-const subjectText = 'MySmartMedical - Appointment Sign In';
 
 // SETUP
 // TODO: put real credentials here for gmail account
@@ -16,7 +16,8 @@ nodemailer.SMTP = {
 };
 
 // METHODS
-var sendWithAttachment = async(email, text, filename, file) => {
+var sendWithAttachment = async(email, subjectText, text, filename, file) => {
+  filename = sanitize(filename);
   let data = fs.readFileSync(file);
   return await new Promise(function(resolve reject) {
       nodemailer.send_mail({
