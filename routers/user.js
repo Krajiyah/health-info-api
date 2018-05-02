@@ -85,8 +85,8 @@ router.get("/users/:key?", (req, res) => {
 
 router.post("/users", upload.single('image'), (req, res) => {
   req.body.image = req.file;
-  req.checkBody("image", router.errors.missingErrorMessage).notEmpty();
-  req.checkBody("image", router.errors.formatErrorMessage).isValidFile();
+  req.checkBody("image", routerUtil.errors.missingErrorMessage).notEmpty();
+  req.checkBody("image", routerUtil.errors.formatErrorMessage).isValidFile();
   req.checkBody("firstName", routerUtil.errors.missingErrorMessage).notEmpty();
   req.checkBody("lastName", routerUtil.errors.missingErrorMessage).notEmpty();
   req.checkBody("phoneNumber", routerUtil.errors.missingErrorMessage).notEmpty();
