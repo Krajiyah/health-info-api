@@ -3,6 +3,7 @@ const router = require("express").Router();
 const routerUtil = require("../util/router.js");
 const Appointment = require("../models/Appointment.js");
 const User = require("../models/User.js");
+const Institution = require("../models/Institution.js");
 
 router.get("/appointments/:key?", (req, res) => {
   req.checkQuery("key", routerUtil.errors.missingErrorMessage).notEmpty();
