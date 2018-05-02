@@ -64,10 +64,10 @@ Appointment.prototype.signIn = async function() {
   let mh = await user.getMedicationHistory();
   if (mh.length > 0) {
     let p = [];
-    mhList.forEach(mh => {
-      p.push(`Type: ${mh.type}`);
-      p.push(`Amount: ${mh.amount}`);
-      p.push(`Frequency: ${mh.frequency}`);
+    mh.forEach(m => {
+      p.push(`Type: ${m.type}`);
+      p.push(`Amount: ${m.amount}`);
+      p.push(`Frequency: ${m.frequency}`);
       p.push("");
     });
     pages.push({
