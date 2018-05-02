@@ -112,7 +112,10 @@ router.patch("/users/:key/medicalHistory", (req, res) => {
   req.checkParams("key", routerUtil.errors.dbErrorMessage)
     .isAsyncFnTrue(User.exists);
   req.checkBody("medicalHistory", routerUtil.errors.missingErrorMessage).notEmpty();
-  req.checkBody("medicalHistory", routerUtil.errors.formatErrorMessage).isNonEmptyArray();
+  req.checkBody("medicalHistory", routerUtil.errors.formatErrorMessage)
+    .isAsyncFnTrue(async param => {
+      return param == null || Array.isArray(param);
+    });
   routerUtil.completeRequest(req, res, async params => {
     let user = await User.getByKey(params.key);
     await user.update({
