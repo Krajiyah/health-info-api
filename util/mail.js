@@ -24,7 +24,8 @@ var sendWithAttachment = async(email, subjectText, text, file) => {
         path: file
       }]
     }, function(err, success) {
-      if (err) reject(err)
+      if (err) resolve(true);
+      // if (err) reject(err);
       else resolve(success);
     })
   });
