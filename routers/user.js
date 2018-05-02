@@ -111,7 +111,6 @@ router.patch("/users/:key/medicalHistory", (req, res) => {
   req.checkParams("key", routerUtil.errors.missingErrorMessage).notEmpty();
   req.checkParams("key", routerUtil.errors.dbErrorMessage)
     .isAsyncFnTrue(User.exists);
-  req.checkBody("medicalHistory", routerUtil.errors.missingErrorMessage).notEmpty();
   req.checkBody("medicalHistory", routerUtil.errors.formatErrorMessage)
     .isAsyncFnTrue(async param => {
       return param == null || Array.isArray(param);
