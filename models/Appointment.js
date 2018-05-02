@@ -4,6 +4,8 @@ const PDFDocument = require("../util/pdf.js");
 const mail = require("../util/mail.js");
 const overrides = require("../util/overrides.js");
 const Appointment = firebase.db.Appointment;
+const User = require("../models/User.js");
+const Institution = require("../models/Institution.js");
 
 // CONSTANTS
 const appName = "MySmartMedical";
@@ -14,20 +16,88 @@ const coverPageText =
 
 // PROTOTYPES
 Appointment.prototype.signIn = async function() {
-  let user = this.user;
-  await user.fetch();
-  let institution = this.institution;
-  await institution.fetch();
-  let pages = [{
-    title: "General Info",
-    paragraphs: ["p1", "p2"]
-  }];
+  let user = await User.getByKey(this.getValue().user);
+  let institution = await Institution.getByKey(this.getValue().institution);
+  let hasGeneralInfo = await user.hasGeneralInfo();
+  let pages = [];
+  if (hasGeneralInfo) {
+    let generalInfo = await user.getGeneralInfo();
+    let value = generalInfo.getValue();
+    pages.push({
+      title: "General Info",
+      paragraphs: [
+        `Date of Birth: ${value.dateOfBirth}`,
+        `Sex: ${value.sex}`,
+        `Marital Status: ${value.maritalStatus}`,
+        `Occupation: ${value.occupation}`
+      ]
+    });
+  }
+  let hasLocationInfo = await user.hasLocationInfo();
+  if (hasLocationInfo) {
+    let locationInfo = await user.getLocationInfo();
+    let value = locationInfo.getValue();
+    pages.push({
+      title: "Location Info",
+      paragraphs: [
+        `Address Line 1: ${value.addressLine1}`,
+        `Address Line 2: ${value.addressLine2}`,
+        `City: ${value.city}`,
+        `State: ${value.state}`,
+        `Zip Code: ${value.zipcode}`
+      ]
+    });
+  }
+  let hasEmergencyContact = await user.hasEmergencyContact();
+  if (hasEmergencyContact) {
+    let emergencyContact = await user.getEmergencyContact();
+    let value = emergencyContact.getValue();
+    pages.push({
+      title: "Emergency Contact",
+      paragraphs: [
+        `Full Name: ${value.fullName}`,
+        `Phone Number: ${value.phoneNumber}`,
+        `Email: ${value.email}`
+      ]
+    });
+  }
+  let mh = await user.getMedicationHistory();
+  if (mh.length > 0) {
+    let p = [];
+    mhList.forEach(mh => {
+      p.push(`Type: ${mh.type}`);
+      p.push(`Amount: ${mh.amount}`);
+      p.push(`Frequency: ${mh.frequency}`);
+      p.push("");
+    });
+    pages.push({
+      title: "Medication History",
+      paragraphs: p
+    });
+  }
+  if (user.medicalHistory && user.medicalHistory.length > 0) {
+    pages.push({
+      title: "Medical History",
+      paragraphs: user.medicalHistory
+    });
+  }
+  if (user.photoIdUrl) {
+    pages.push({
+      title: "Photo ID",
+      paragraphs: [`Url: ${user.photoIdUrl}`]
+    });
+  }
+  if (user.insuranceUrl) {
+    pages.push({
+      title: "Insurance",
+      paragraphs: [`Url: ${user.insuranceUrl}`]
+    });
+  }
   let pdf = PDFDocument.genFormattedDoc(appIcon, coverPageText, pages);
-  let filename = `${user.firstName}_${user.lastName}_medical_info.pdf`;
   let text =
     `${user.firstName} ${user.lastName} has signed for ${this.name}. Attached is their medical information.`
   let email = institution.email;
-  await mail.sendWithAttachment(email, subjectText, text, filename, pdf);
+  await mail.sendWithAttachment(email, subjectText, text, pdf);
   await this.update({
     signedIn: true
   });

@@ -3,7 +3,7 @@ const PDFDocument = require("pdfkit");
 const fs = require("fs");
 
 // CONSTANTS
-const tmpFile = "/tmp/output.pdf";
+const tmpFile = "/tmp/medicalInfo.pdf";
 const coverPageFontSize = 30;
 const imageMargin = 150;
 const imageWidth = 100;

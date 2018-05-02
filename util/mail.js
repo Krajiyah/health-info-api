@@ -1,6 +1,6 @@
 // DEPENDENCIES
 const nodemailer = require("nodemailer");
-const sanitize = require("sanitize-filename");
+const fs = require("fs");
 
 // CONSTANTS
 const senderEmail = process.env.EMAIL;
@@ -13,18 +13,15 @@ const transporter = nodemailer.createTransport({
 });
 
 // METHODS
-var sendWithAttachment = async(email, subjectText, text, filename, file) => {
-  filename = sanitize(filename);
-  let data = fs.readFileSync(file);
+var sendWithAttachment = async(email, subjectText, text, file) => {
   return await new Promise(function(resolve, reject) {
     transporter.sendMail({
       from: senderEmail,
       to: email,
       subject: subjectText,
-      body: text,
+      html: text,
       attachments: [{
-        filename: filename,
-        content: data
+        path: file
       }]
     }, function(err, success) {
       if (err) reject(err)
