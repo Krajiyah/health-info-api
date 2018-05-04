@@ -9,7 +9,7 @@ var run = async(fn, initLabel, successLabel) => {
     await fn();
     console.log("Success: ", successLabel);
   } catch (e) {
-    console.error("Error: ", error);
+    console.error("Error: ", e);
   }
   let seconds = time.secondsApart(start, new Date());
   console.log("Elapsed Time: ", seconds, "seconds");

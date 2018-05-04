@@ -131,6 +131,7 @@ User.prototype.setFCMToken = async function(token) {
 }
 
 User.prototype.sendNotification = async function(message) {
+  if (!this.fcmToken) return;
   await fcm.sendToDevice(this.fcmToken, appName, message, {});
 }
 

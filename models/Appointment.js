@@ -121,8 +121,8 @@ Appointment.remind = async() => {
     signedIn: false
   });
   await aList.forEachAsync(async a => {
-    let u = a.user;
-    await u.fetch();
+    let uId = a.getValue().user;
+    let u = await User.getByKey(uId);
     await u.sendNotification(`Your appointment ${a.name} is coming up.`);
   });
 }
