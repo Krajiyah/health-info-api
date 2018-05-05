@@ -1,5 +1,6 @@
 // DEPENDENCIES
 const firebase = require("../util/firebase.js");
+const overrides = require("../util/overrides.js");
 const User = firebase.db.User;
 const Appointment = firebase.db.Appointment;
 const MedicationHistory = firebase.db.MedicationHistory;
@@ -125,14 +126,14 @@ User.prototype.addMedicationHistory = async function(params) {
 }
 
 User.prototype.setFCMToken = async function(token) {
-  await this.update({
-    fcmToken: token
-  });
+  await this.transactAppendToList("fcmTokens", token, true);
 }
 
 User.prototype.sendNotification = async function(message) {
-  if (!this.fcmToken) return;
-  await fcm.sendToDevice(this.fcmToken, appName, message, {});
+  if (!this.fcmTokens || this.fcmTokens.length == 0) return;
+  await this.fcmTokens.forEachAsync(async token => {
+    await fcm.sendToDevice(token, appName, message, {});
+  });
 }
 
 // STATICS
