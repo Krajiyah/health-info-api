@@ -99,10 +99,11 @@ router.patch("/users/:key/fcmToken", (req, res) => {
   req.checkParams("key", routerUtil.errors.missingErrorMessage).notEmpty();
   req.checkParams("key", routerUtil.errors.dbErrorMessage)
     .isAsyncFnTrue(User.exists);
+  req.checkBody("deviceId", routerUtil.errors.missingErrorMessage).notEmpty();
   req.checkBody("token", routerUtil.errors.missingErrorMessage).notEmpty();
   routerUtil.completeRequest(req, res, async params => {
     let user = await User.getByKey(params.key);
-    await user.setFCMToken(params.token);
+    await user.setFCMToken(params.deviceId, params.token);
     return user;
   });
 });

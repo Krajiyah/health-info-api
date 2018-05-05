@@ -125,8 +125,12 @@ User.prototype.addMedicationHistory = async function(params) {
   });
 }
 
-User.prototype.setFCMToken = async function(token) {
-  await this.transactAppendToList("fcmTokens", token, true);
+User.prototype.setFCMToken = async function(deviceId, token) {
+  await this.transaction("fcmTokens", function(fcmTokens) {
+    fcmTokens = fcmTokens || {};
+    fcmTokens[deviceId] = token;
+    return fcmTokens;
+  });
 }
 
 User.prototype.sendNotification = async function(message) {

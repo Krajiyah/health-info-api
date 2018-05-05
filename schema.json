@@ -2,7 +2,7 @@
   "User": {
     "path": "Users",
     "fields": {
-      "fcmTokens": "array",
+      "fcmTokens": "object",
       "firstName": "string",
       "lastName": "string",
       "phoneNumber": "string",
