@@ -160,8 +160,11 @@ User.hasEmergencyContact = async key => {
 }
 
 User.create = async params => {
+  console.log("Create User Params: ", JSON.stringify(params, null, 2));
   let imageUrl = await storage.upload(params.image);
   let authData = await auth.create(params.email, params.password);
+  console.log("Image Url: ", imageUrl);
+  console.log("UID: ", authData.uid);
   return await User.createByManualKey(authData.uid, {
     firstName: params.firstName,
     lastName: params.lastName,

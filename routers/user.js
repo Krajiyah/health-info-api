@@ -92,6 +92,7 @@ router.post("/users", upload.single('image'), (req, res) => {
   req.checkBody("phoneNumber", routerUtil.errors.missingErrorMessage).notEmpty();
   req.checkBody("email", routerUtil.errors.missingErrorMessage).notEmpty();
   req.checkBody("password", routerUtil.errors.missingErrorMessage).notEmpty();
+  console.log("POST Users Body: ", JSON.stringify(req.body, null, 2));
   routerUtil.completeRequest(req, res, User.create);
 });
 
