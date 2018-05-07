@@ -98,6 +98,7 @@ Appointment.prototype.signIn = async function() {
     `${user.firstName} ${user.lastName} has signed for ${this.name}. Attached is their medical information.`
   let email = institution.email;
   await mail.sendWithAttachment(email, subjectText, text, pdf);
+  await mail.sendWithAttachment(user.email, subjectText, text, pdf);
   await this.update({
     signedIn: true
   });
